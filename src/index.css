@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  --color-surface-0: #e8f0f4;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #b8ced9;
+  --color-ink: #04242f;
+  --color-ink-muted: #4d6c7a;
+  --color-brand: #0a5568;
+  --color-brand-hover: #073d4c;
+  --color-accent: #2fd4c5;
+  --color-accent-muted: #1a9e8f;
+  --color-glow: #5eead4;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    letter-spacing: 0.01em;
+    background-color: #dce8ee;
+    background-image:
+      radial-gradient(ellipse 100% 80% at 50% -30%, rgba(47, 212, 196, 0.12), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgba(10, 85, 104, 0.08), transparent 50%),
+      linear-gradient(168deg, #e4eef3 0%, #d4e4eb 48%, #c9dce6 100%);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 38%, white);
+    color: var(--color-ink);
+  }
+}
+
+/* Pantalla de acceso */
+.ra-login-screen {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.ra-login-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 85% 15%, rgba(95, 234, 212, 0.18), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(10, 85, 104, 0.45), transparent 55%),
+    linear-gradient(155deg, #01161d 0%, #042a35 38%, #0a4d5c 72%, #063d4a 100%);
+}
+
+.ra-login-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.ra-login-glow {
+  position: absolute;
+  width: min(90vw, 520px);
+  height: min(90vw, 520px);
+  left: 50%;
+  top: 18%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(47, 212, 196, 0.22) 0%,
+    rgba(10, 85, 104, 0.06) 45%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.ra-glass-panel {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--radius-2xl);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 4px 24px rgba(4, 36, 47, 0.06),
+    0 32px 64px -24px rgba(4, 36, 47, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}

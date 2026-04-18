@@ -1,0 +1,85 @@
+/* FullCalendar — acabado premium alineado con Aviox */
+.fc {
+  --fc-border-color: color-mix(in srgb, #0a5568 12%, #b8ced9);
+  --fc-button-text-color: #04242f;
+  --fc-button-bg-color: #ffffff;
+  --fc-button-border-color: #c5d8e0;
+  --fc-button-hover-bg-color: #eef6f9;
+  --fc-button-hover-border-color: #0a5568;
+  --fc-button-active-bg-color: #0a5568;
+  --fc-button-active-border-color: #073d4c;
+  --fc-button-active-text-color: #f8fcfd;
+  --fc-today-bg-color: rgba(47, 212, 196, 0.14);
+  --fc-page-bg-color: #fbfdfe;
+  --fc-neutral-bg-color: #eef4f7;
+  --fc-list-event-hover-bg-color: #e8f2f6;
+  --fc-event-border-color: transparent;
+  --fc-now-indicator-color: #2fd4c5;
+  font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #04242f;
+}
+
+.fc .fc-col-header-cell {
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+  color: #4d6c7a;
+  padding: 0.65rem 0.25rem;
+}
+
+.fc .fc-timegrid-slot-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #5a7582;
+}
+
+.fc .fc-event {
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(4, 36, 47, 0.12);
+}
+
+.fc .fc-event-title {
+  font-weight: 600;
+}
+
+.fc .fc-scrollgrid {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.fc .fc-button {
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  padding: 0.4em 0.75em;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #0a5568;
+  border-color: #073d4c;
+  color: #f8fcfd;
+  box-shadow: 0 2px 12px rgba(10, 85, 104, 0.35);
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: rgba(47, 212, 196, 0.06);
+}
