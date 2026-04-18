@@ -20,8 +20,6 @@ const es: Record<string, string> = {
 
   'login.title': 'Iniciar sesión',
   'login.desc': 'Ingresa con tu correo y contraseña para acceder a la agenda y operación.',
-  'login.banner':
-    'Credenciales demo (sin backend). Instructor: {tutor} · Estudiante: {student} — misma contraseña para ambos.',
   'login.email': 'Correo',
   'login.password': 'Contraseña',
   'login.submit': 'Entrar',
@@ -324,8 +322,6 @@ const en: Record<string, string> = {
 
   'login.title': 'Sign in',
   'login.desc': 'Use your email and password to access the schedule and ops.',
-  'login.banner':
-    'Demo credentials (no backend). Instructor: {tutor} · Student: {student} — same password for both.',
   'login.email': 'Email',
   'login.password': 'Password',
   'login.submit': 'Sign in',
