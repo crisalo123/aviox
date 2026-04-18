@@ -6,15 +6,16 @@ import {
   useState,
 } from 'react'
 import type { User, UserRole } from '@/entities/user/model/types'
+import { MOCK_STUDENT_ROWS } from '@/features/tutor/model/mockStudents'
 import { sleep } from '@/shared/lib/sleep'
 
 const STORAGE_KEY = 'ra_auth_v1'
 
 /** Acceso temporal fijo (sin backend). */
 export const DEMO_EMAIL = 'sebastian.constructorabogota@gmail.com'
+/** Misma contraseña que `DEMO_PASSWORD`. El id coincide con el primer alumno mock (Ana Torres) para reservas y mapa. */
+export const DEMO_STUDENT_EMAIL = 'alumno@demo.aviox.app'
 export const DEMO_PASSWORD = 'EZc@nør557!$'
-/** Rol asignado al iniciar con las credenciales demo (toda la navegación de instructor). */
-const DEMO_ROLE: UserRole = 'tutor'
 
 export const INVALID_LOGIN_ERROR = 'INVALID_LOGIN'
 
@@ -55,17 +56,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (c: LoginCredentials) => {
     await sleep(450)
     const emailNorm = c.email.trim().toLowerCase()
-    if (emailNorm !== DEMO_EMAIL || c.password !== DEMO_PASSWORD) {
+    const studentEmailNorm = DEMO_STUDENT_EMAIL.trim().toLowerCase()
+    const okTutor = emailNorm === DEMO_EMAIL.trim().toLowerCase() && c.password === DEMO_PASSWORD
+    const okStudent =
+      emailNorm === studentEmailNorm && c.password === DEMO_PASSWORD
+    if (!okTutor && !okStudent) {
       throw new Error(INVALID_LOGIN_ERROR)
     }
-    const display =
-      emailNorm.split('@')[0]?.replaceAll('.', ' ') ?? 'Piloto'
-    const next: User = {
-      id: crypto.randomUUID(),
-      email: emailNorm,
-      displayName: display.charAt(0).toUpperCase() + display.slice(1),
-      role: DEMO_ROLE,
-    }
+    const next: User = okStudent
+      ? (() => {
+          const row = MOCK_STUDENT_ROWS[0]
+          if (!row) {
+            throw new Error(INVALID_LOGIN_ERROR)
+          }
+          return {
+            id: row.id,
+            email: emailNorm,
+            displayName: row.name,
+            role: 'student' as const satisfies UserRole,
+          }
+        })()
+      : (() => {
+          const display =
+            emailNorm.split('@')[0]?.replaceAll('.', ' ') ?? 'Piloto'
+          return {
+            id: crypto.randomUUID(),
+            email: emailNorm,
+            displayName: display.charAt(0).toUpperCase() + display.slice(1),
+            role: 'tutor' as const satisfies UserRole,
+          }
+        })()
     setUser(next)
     persistUser(next)
   }, [])

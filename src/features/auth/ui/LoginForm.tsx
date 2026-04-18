@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   DEMO_EMAIL,
   DEMO_PASSWORD,
+  DEMO_STUDENT_EMAIL,
   INVALID_LOGIN_ERROR,
 } from '@/features/auth/model/authContext'
 import { useAuth } from '@/features/auth/model/useAuth'
@@ -15,7 +16,7 @@ import { LogoMark } from '@/shared/ui/LogoMark'
 
 export function LoginForm() {
   const { login } = useAuth()
-  const { t } = useLanguage()
+  const { t, ti } = useLanguage()
   const navigate = useNavigate()
   const [email, setEmail] = useState(DEMO_EMAIL)
   const [password, setPassword] = useState(DEMO_PASSWORD)
@@ -53,7 +54,12 @@ export function LoginForm() {
       <form className="flex flex-col gap-5" onSubmit={onSubmit}>
         <div className="flex items-start gap-3 rounded-xl border border-brand/10 bg-gradient-to-br from-teal-500/[0.08] to-cyan-800/[0.06] px-3.5 py-3 text-sm leading-snug text-ink-muted">
           <LogoMark size={22} className="mt-0.5 shrink-0 text-brand" />
-          <span>{t('login.banner')}</span>
+          <span>
+            {ti('login.banner', {
+              tutor: DEMO_EMAIL,
+              student: DEMO_STUDENT_EMAIL,
+            })}
+          </span>
         </div>
 
         <Input
