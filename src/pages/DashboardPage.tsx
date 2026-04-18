@@ -3,64 +3,80 @@ import {
   ArrowRight,
   CalendarDays,
   ClipboardList,
+  FileText,
   Map,
+  Navigation2,
   PlaneTakeoff,
   Users,
   Wallet,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { UserRole } from '@/entities/user/model/types'
-import { ROLE_LABELS } from '@/entities/user/model/types'
 import { useAuth } from '@/features/auth/model/useAuth'
 import { FleetOpsSummary } from '@/features/aircraft/ui/FleetOpsSummary'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Card } from '@/shared/ui/Card'
 
-const cards: {
+const cardDefs: {
   to: string
-  title: string
-  desc: string
+  titleKey: string
+  descKey: string
   icon: LucideIcon
   roles: readonly UserRole[]
 }[] = [
   {
     to: '/flota',
-    title: 'Flota',
-    desc: 'Aeronaves con foto, matrícula y datos para planear tu clase.',
+    titleKey: 'dash.card.flota.title',
+    descKey: 'dash.card.flota.desc',
     icon: PlaneTakeoff,
     roles: ['student', 'tutor', 'user'],
   },
   {
     to: '/horario',
-    title: 'Horario de vuelos',
-    desc: 'Consulta bloques libres y reserva (estudiante).',
+    titleKey: 'dash.card.horario.title',
+    descKey: 'dash.card.horario.desc',
     icon: CalendarDays,
     roles: ['student', 'tutor', 'user'],
   },
   {
     to: '/reservas',
-    title: 'Reservas',
-    desc: 'Gestiona tus clases o revisa las de tus alumnos.',
+    titleKey: 'dash.card.reservas.title',
+    descKey: 'dash.card.reservas.desc',
     icon: ClipboardList,
     roles: ['student', 'tutor'],
   },
   {
+    to: '/documentos',
+    titleKey: 'dash.card.documentos.title',
+    descKey: 'dash.card.documentos.desc',
+    icon: FileText,
+    roles: ['student', 'tutor', 'user'],
+  },
+  {
+    to: '/seguimiento',
+    titleKey: 'dash.card.seguimiento.title',
+    descKey: 'dash.card.seguimiento.desc',
+    icon: Navigation2,
+    roles: ['student', 'tutor'],
+  },
+  {
     to: '/pista',
-    title: 'Mapa de pista',
-    desc: 'Referencia visual de zonas en la pista.',
+    titleKey: 'dash.card.pista.title',
+    descKey: 'dash.card.pista.desc',
     icon: Map,
     roles: ['student', 'tutor', 'user'],
   },
   {
     to: '/tutor/progreso',
-    title: 'Progreso',
-    desc: 'Tablero de avance de estudiantes.',
+    titleKey: 'dash.card.progreso.title',
+    descKey: 'dash.card.progreso.desc',
     icon: Users,
     roles: ['tutor'],
   },
   {
     to: '/tutor/finanzas',
-    title: 'Finanzas',
-    desc: 'Ganancias y saldo estimado.',
+    titleKey: 'dash.card.finanzas.title',
+    descKey: 'dash.card.finanzas.desc',
     icon: Wallet,
     roles: ['tutor'],
   },
@@ -68,22 +84,24 @@ const cards: {
 
 export function DashboardPage() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   if (!user) return null
 
-  const visible = cards.filter((c) => c.roles.includes(user.role))
+  const visible = cardDefs.filter((c) => c.roles.includes(user.role))
+  const roleLabel = t(`role.${user.role}`)
 
   return (
     <div className="flex flex-col gap-8">
       <header className="space-y-2">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand/80">
-          Panel principal
+          {t('dashboard.panel')}
         </p>
         <h1 className="text-3xl font-bold tracking-tight text-ink md:text-4xl">
-          Hola, {user.displayName}
+          {t('dashboard.hello')}, {user.displayName}
         </h1>
         <p className="max-w-xl text-sm font-medium leading-relaxed text-ink-muted md:text-base">
-          Rol: <span className="font-semibold text-ink">{ROLE_LABELS[user.role]}</span>.
-          Usa el menú lateral o los accesos rápidos para moverte por la operación.
+          {t('dashboard.role')}: <span className="font-semibold text-ink">{roleLabel}</span>.{' '}
+          {t('dashboard.intro')}
         </p>
       </header>
 
@@ -99,9 +117,9 @@ export function DashboardPage() {
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand/12 to-teal-500/10 text-brand ring-1 ring-brand/10">
                       <c.icon className="h-5 w-5" aria-hidden />
                     </span>
-                    {c.title}
+                    {t(c.titleKey)}
                   </p>
-                  <p className="mt-3 text-sm leading-relaxed text-ink-muted">{c.desc}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-ink-muted">{t(c.descKey)}</p>
                 </div>
                 <ArrowRight
                   className="h-5 w-5 shrink-0 text-ink-muted transition duration-300 group-hover:translate-x-1 group-hover:text-brand"

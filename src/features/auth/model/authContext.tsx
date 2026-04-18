@@ -10,10 +10,17 @@ import { sleep } from '@/shared/lib/sleep'
 
 const STORAGE_KEY = 'ra_auth_v1'
 
+/** Acceso temporal fijo (sin backend). */
+export const DEMO_EMAIL = 'sebastian.constructorabogota@gmail.com'
+export const DEMO_PASSWORD = 'EZc@nør557!$'
+/** Rol asignado al iniciar con las credenciales demo (toda la navegación de instructor). */
+const DEMO_ROLE: UserRole = 'tutor'
+
+export const INVALID_LOGIN_ERROR = 'INVALID_LOGIN'
+
 export interface LoginCredentials {
   email: string
   password: string
-  role: UserRole
 }
 
 interface AuthContextValue {
@@ -47,13 +54,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (c: LoginCredentials) => {
     await sleep(450)
+    const emailNorm = c.email.trim().toLowerCase()
+    if (emailNorm !== DEMO_EMAIL || c.password !== DEMO_PASSWORD) {
+      throw new Error(INVALID_LOGIN_ERROR)
+    }
     const display =
-      c.email.split('@')[0]?.replaceAll('.', ' ') ?? 'Piloto'
+      emailNorm.split('@')[0]?.replaceAll('.', ' ') ?? 'Piloto'
     const next: User = {
       id: crypto.randomUUID(),
-      email: c.email.trim().toLowerCase(),
+      email: emailNorm,
       displayName: display.charAt(0).toUpperCase() + display.slice(1),
-      role: c.role,
+      role: DEMO_ROLE,
     }
     setUser(next)
     persistUser(next)

@@ -9,11 +9,18 @@ import {
 import type { FlightBooking } from '@/entities/booking/model/types'
 import type { FlightSlot } from '@/entities/flight/model/types'
 import type { User } from '@/entities/user/model/types'
+import { buildSyntheticRouteStages } from '@/features/booking/lib/routeStages'
 
 const STORAGE_KEY = 'ra_bookings_v2'
 
 type BookOk = { ok: true }
-type BookErr = { ok: false; message: string }
+
+export type BookErrorCode =
+  | 'slot_taken'
+  | 'tutor_simulation_only'
+  | 'student_booking_only'
+
+type BookErr = { ok: false; code: BookErrorCode }
 export type BookResult = BookOk | BookErr
 
 /** Solo instructores: crea una reserva en nombre de un alumno (simulación). */
@@ -30,6 +37,11 @@ type Action =
   | { type: 'add'; payload: FlightBooking }
   | { type: 'cancel'; id: string; studentId: string }
   | { type: 'complete'; id: string }
+  | {
+      type: 'setFlightAwareIdent'
+      id: string
+      flightAwareIdent: string | undefined
+    }
 
 function reducer(state: BookingState, action: Action): BookingState {
   switch (action.type) {
@@ -45,11 +57,28 @@ function reducer(state: BookingState, action: Action): BookingState {
             : b,
         ),
       }
-    case 'complete':
+    case 'complete': {
+      return {
+        bookings: state.bookings.map((b) => {
+          if (b.id !== action.id || b.status !== 'confirmada') return b
+          const zone = b.zone === 'bravo' ? 'bravo' : 'alpha'
+          const routeStages = buildSyntheticRouteStages(b.id, zone)
+          return {
+            ...b,
+            status: 'completada' as const,
+            routeStages,
+          }
+        }),
+      }
+    }
+    case 'setFlightAwareIdent':
       return {
         bookings: state.bookings.map((b) =>
-          b.id === action.id && b.status === 'confirmada'
-            ? { ...b, status: 'completada' as const }
+          b.id === action.id
+            ? {
+                ...b,
+                flightAwareIdent: action.flightAwareIdent,
+              }
             : b,
         ),
       }
@@ -82,6 +111,10 @@ interface BookingContextValue {
   ) => BookResult
   cancelBooking: (id: string, studentId: string) => void
   completeBooking: (id: string) => void
+  setBookingFlightAwareIdent: (
+    id: string,
+    flightAwareIdent: string | undefined,
+  ) => void
 }
 
 export const BookingContext = createContext<BookingContextValue | null>(null)
@@ -110,16 +143,13 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       options?: { simulateFor?: BookSlotSimulateFor },
     ): BookResult => {
       if (slotIsTaken(slot.id)) {
-        return { ok: false, message: 'Este hueco ya está reservado.' }
+        return { ok: false, code: 'slot_taken' }
       }
 
       const sim = options?.simulateFor
       if (sim) {
         if (actingUser.role !== 'tutor') {
-          return {
-            ok: false,
-            message: 'Solo instructores pueden registrar una clase simulada para un alumno.',
-          }
+          return { ok: false, code: 'tutor_simulation_only' }
         }
         const booking: FlightBooking = {
           id: crypto.randomUUID(),
@@ -139,11 +169,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       }
 
       if (actingUser.role !== 'student') {
-        return {
-          ok: false,
-          message:
-            'Para tu propia reserva entra como estudiante, o elige un alumno si eres instructor.',
-        }
+        return { ok: false, code: 'student_booking_only' }
       }
 
       const booking: FlightBooking = {
@@ -173,6 +199,13 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'complete', id })
   }, [])
 
+  const setBookingFlightAwareIdent = useCallback(
+    (id: string, flightAwareIdent: string | undefined) => {
+      dispatch({ type: 'setFlightAwareIdent', id, flightAwareIdent })
+    },
+    [],
+  )
+
   const value = useMemo(
     () => ({
       bookings: state.bookings,
@@ -180,6 +213,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       bookSlot,
       cancelBooking,
       completeBooking,
+      setBookingFlightAwareIdent,
     }),
     [
       state.bookings,
@@ -187,6 +221,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       bookSlot,
       cancelBooking,
       completeBooking,
+      setBookingFlightAwareIdent,
     ],
   )
 

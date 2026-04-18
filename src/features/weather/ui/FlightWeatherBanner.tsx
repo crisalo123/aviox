@@ -7,6 +7,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useFlightWeather } from '@/features/weather/model/useFlightWeather'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Button } from '@/shared/ui/Button'
 
 const levelStyles = {
@@ -29,6 +30,7 @@ const levelStyles = {
 
 export function FlightWeatherBanner() {
   const { status, report, error, reload } = useFlightWeather()
+  const { t } = useLanguage()
 
   if (status === 'loading' && !report) {
     return (
@@ -38,7 +40,7 @@ export function FlightWeatherBanner() {
         aria-live="polite"
       >
         <Loader2 className="h-5 w-5 shrink-0 animate-spin text-brand" aria-hidden />
-        Consultando clima en la zona de operación…
+        {t('weather.loading')}
       </div>
     )
   }
@@ -52,7 +54,7 @@ export function FlightWeatherBanner() {
         </span>
         <Button type="button" variant="secondary" className="shrink-0" onClick={() => void reload()}>
           <RefreshCw className="h-4 w-4" aria-hidden />
-          Reintentar
+          {t('weather.retry')}
         </Button>
       </div>
     )
@@ -67,7 +69,7 @@ export function FlightWeatherBanner() {
     <div
       className={`flex flex-col gap-3 rounded-2xl border px-4 py-4 shadow-md backdrop-blur-sm sm:flex-row sm:items-start sm:justify-between ${st.wrap}`}
       role="region"
-      aria-label="Estado meteorológico para vuelo"
+      aria-label={t('weather.aria')}
     >
       <div className="flex min-w-0 flex-1 gap-3">
         <span
@@ -77,7 +79,7 @@ export function FlightWeatherBanner() {
         </span>
         <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-[0.12em] opacity-80">
-            Condiciones para vuelo
+            {t('weather.region')}
           </p>
           <h2 className="mt-0.5 text-base font-bold leading-snug tracking-tight">{report.titulo}</h2>
           <p className="mt-1.5 text-sm leading-relaxed opacity-95">{report.detalle}</p>
@@ -85,17 +87,18 @@ export function FlightWeatherBanner() {
             {report.vueloPracticaRecomendado ? (
               <span className="inline-flex items-center gap-1 text-emerald-800">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                Práctica VFR: sí, con briefing habitual del club.
+                {t('weather.vfrYes')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-current">
                 <Ban className="h-3.5 w-3.5" aria-hidden />
-                Práctica VFR: no recomendada con estas lecturas automáticas.
+                {t('weather.vfrNo')}
               </span>
             )}
           </p>
           <p className="mt-2 text-[0.65rem] font-medium uppercase tracking-wider opacity-70">
-            Fuente: Open-Meteo · zona aeródromo · {report.observadoEn.replace('T', ' ')} (aprox.)
+            {t('weather.source')} {report.observadoEn.replace('T', ' ')}{' '}
+            {t('weather.approx')}
           </p>
         </div>
       </div>
@@ -111,7 +114,7 @@ export function FlightWeatherBanner() {
         ) : (
           <RefreshCw className="h-4 w-4" aria-hidden />
         )}
-        Actualizar
+        {t('weather.update')}
       </Button>
     </div>
   )

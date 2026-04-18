@@ -15,6 +15,14 @@ const RunwayPage = lazy(() =>
 const FleetPage = lazy(() =>
   import('@/pages/FleetPage').then((m) => ({ default: m.FleetPage })),
 )
+const DocumentsPage = lazy(() =>
+  import('@/pages/DocumentsPage').then((m) => ({ default: m.DocumentsPage })),
+)
+const FlightTrackingPage = lazy(() =>
+  import('@/pages/FlightTrackingPage').then((m) => ({
+    default: m.FlightTrackingPage,
+  })),
+)
 import { RequireAuth } from '@/processes/auth-guard/RequireAuth'
 import { AppShell } from '@/widgets/app-shell/AppShell'
 
@@ -32,6 +40,8 @@ export const appRouter = createBrowserRouter([
           { path: 'flota', element: <FleetPage /> },
           { path: 'horario', element: <SchedulePage /> },
           { path: 'reservas', element: <ReservationsPage /> },
+          { path: 'documentos', element: <DocumentsPage /> },
+          { path: 'seguimiento', element: <FlightTrackingPage /> },
           { path: 'pista', element: <RunwayPage /> },
           { path: 'tutor/progreso', element: <ProgressPage /> },
           { path: 'tutor/finanzas', element: <FinancesPage /> },

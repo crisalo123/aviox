@@ -1,11 +1,9 @@
 import { Activity } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { AIRCRAFT_CATALOG } from '@/entities/aircraft/catalog/aircraftCatalog'
-import {
-  OPS_STATUS_LABEL,
-  type AircraftOperationalStatus,
-} from '@/entities/aircraft/model/opsStatus'
+import type { AircraftOperationalStatus } from '@/entities/aircraft/model/opsStatus'
 import { useFleetOps } from '@/features/aircraft/model/useFleetOps'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Card } from '@/shared/ui/Card'
 
 const dotClass: Record<AircraftOperationalStatus, string> = {
@@ -16,6 +14,7 @@ const dotClass: Record<AircraftOperationalStatus, string> = {
 
 export function FleetOpsSummary() {
   const { getStatus } = useFleetOps()
+  const { t, ti } = useLanguage()
   const inFlightCount = AIRCRAFT_CATALOG.filter(
     (a) => getStatus(a.id) === 'in_flight',
   ).length
@@ -28,21 +27,19 @@ export function FleetOpsSummary() {
             <Activity className="h-5 w-5" aria-hidden />
           </span>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-ink">
-              Estado de flota (simulado)
-            </h2>
+            <h2 className="text-base font-bold tracking-tight text-ink">{t('fleet.title')}</h2>
             <p className="mt-1 text-sm text-ink-muted">
-              Vista rápida para alumnos e instructores.{' '}
+              {t('fleet.lead')}{' '}
               {inFlightCount > 0 ? (
                 <span className="font-semibold text-brand">
                   {inFlightCount === 1
-                    ? 'Hay 1 aeronave marcada en vuelo.'
-                    : `Hay ${inFlightCount} aeronaves en vuelo.`}
+                    ? t('fleet.oneFlying')
+                    : ti('fleet.nFlying', { n: inFlightCount })}
                 </span>
               ) : (
-                'Toda la flota figura en tierra.'
+                <span className="font-semibold text-brand">{t('fleet.allGround')}</span>
               )}{' '}
-              Los instructores pueden cambiar el estado en la página Flota.
+              {t('fleet.sub')}
             </p>
           </div>
         </div>
@@ -50,7 +47,7 @@ export function FleetOpsSummary() {
           to="/flota"
           className="shrink-0 text-sm font-semibold text-brand underline-offset-2 hover:underline"
         >
-          Ver flota →
+          {t('fleet.link')}
         </Link>
       </div>
       <ul className="mt-4 flex flex-col gap-2 border-t border-surface-2/80 pt-4">
@@ -72,7 +69,7 @@ export function FleetOpsSummary() {
                 </span>
               </span>
               <span className="shrink-0 text-xs font-semibold text-ink-muted">
-                {OPS_STATUS_LABEL[st]}
+                {t(`ops.${st}`)}
               </span>
             </li>
           )

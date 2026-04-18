@@ -1,9 +1,9 @@
 import { Gauge, MapPin, Users } from 'lucide-react'
 import type { Aircraft } from '@/entities/aircraft/model/types'
 import type { AircraftOperationalStatus } from '@/entities/aircraft/model/opsStatus'
-import { OPS_STATUS_LABEL } from '@/entities/aircraft/model/opsStatus'
 import { useAuth } from '@/features/auth/model/useAuth'
 import { useFleetOps } from '@/features/aircraft/model/useFleetOps'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
 
@@ -24,21 +24,24 @@ function statusPillClass(status: AircraftOperationalStatus): string {
 }
 
 function OpsStatusBadge({ status }: { status: AircraftOperationalStatus }) {
+  const { t } = useLanguage()
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wider ${statusPillClass(status)} ${status === 'in_flight' ? 'animate-pulse' : ''}`}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-white/90" aria-hidden />
-      {OPS_STATUS_LABEL[status]}
+      {t(`ops.${status}`)}
     </span>
   )
 }
 
 export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) {
   const { user } = useAuth()
+  const { locale, t, ti } = useLanguage()
   const { getStatus, setAircraftStatus } = useFleetOps()
   const status = getStatus(aircraft.id)
   const isTutor = user?.role === 'tutor'
+  const numLocale = locale === 'en' ? 'en-US' : 'es-CO'
 
   if (variant === 'compact') {
     return (
@@ -81,7 +84,9 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
           </div>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 to-transparent px-4 pb-3 pt-12">
             <p className="text-xs font-bold uppercase tracking-widest text-teal-200/90">
-              {aircraft.availableForScheduling ? 'Disponible en agenda' : 'Fuera de rotación'}
+              {aircraft.availableForScheduling
+                ? t('aircraft.schedulingOn')
+                : t('aircraft.schedulingOff')}
             </p>
             <h3 className="text-xl font-bold tracking-tight text-white">
               {aircraft.nickname}{' '}
@@ -99,11 +104,9 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
           {isTutor ? (
             <div className="rounded-xl border border-brand/15 bg-surface-0/90 px-4 py-3">
               <p className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                Simulación operativa
+                {t('aircraft.simTitle')}
               </p>
-              <p className="mt-1 text-xs text-ink-muted">
-                Marca si la aeronave está en vuelo, en tierra o en mantenimiento (solo demo).
-              </p>
+              <p className="mt-1 text-xs text-ink-muted">{t('aircraft.simHelp')}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button
                   type="button"
@@ -111,7 +114,7 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
                   className="px-3 py-1.5 text-xs"
                   onClick={() => setAircraftStatus(aircraft.id, 'ground')}
                 >
-                  En tierra
+                  {t('ops.ground')}
                 </Button>
                 <Button
                   type="button"
@@ -119,7 +122,7 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
                   className="px-3 py-1.5 text-xs"
                   onClick={() => setAircraftStatus(aircraft.id, 'in_flight')}
                 >
-                  En vuelo
+                  {t('ops.in_flight')}
                 </Button>
                 <Button
                   type="button"
@@ -127,14 +130,13 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
                   className="px-3 py-1.5 text-xs"
                   onClick={() => setAircraftStatus(aircraft.id, 'maintenance')}
                 >
-                  Mantenimiento
+                  {t('ops.maintenance')}
                 </Button>
               </div>
             </div>
           ) : (
             <p className="rounded-lg bg-surface-0/80 px-3 py-2 text-xs text-ink-muted">
-              Estado en vuelo / tierra simulado. Tu instructor puede actualizarlo en esta misma
-              pantalla.
+              {t('aircraft.studentFleetHint')}
             </p>
           )}
 
@@ -143,10 +145,10 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
               <Users className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                  Capacidad
+                  {t('aircraft.capacity')}
                 </dt>
                 <dd className="font-medium text-ink">
-                  {aircraft.seats} plazas · {aircraft.crewDescription}
+                  {ti('aircraft.seats', { n: aircraft.seats })} · {aircraft.crewDescription}
                 </dd>
               </div>
             </div>
@@ -154,12 +156,14 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
               <Gauge className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                  Motor / crucero
+                  {t('aircraft.engine')}
                 </dt>
                 <dd className="font-medium text-ink">{aircraft.engine}</dd>
                 <dd className="text-xs text-ink-muted">
-                  ~{aircraft.cruiseSpeedKts} kt crucero · techo {aircraft.serviceCeilingFt.toLocaleString('es')}{' '}
-                  ft
+                  {ti('aircraft.cruise', {
+                    kts: aircraft.cruiseSpeedKts,
+                    ft: aircraft.serviceCeilingFt.toLocaleString(numLocale),
+                  })}
                 </dd>
               </div>
             </div>
@@ -167,7 +171,7 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                  Categoría y uso
+                  {t('aircraft.category')}
                 </dt>
                 <dd className="font-medium text-ink">{aircraft.category}</dd>
                 <dd className="text-xs text-ink-muted">{aircraft.roleSummary}</dd>
@@ -175,10 +179,13 @@ export function AircraftCard({ aircraft, variant = 'full' }: AircraftCardProps) 
             </div>
             <div className="sm:col-span-2">
               <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                Autonomía y año
+                {t('aircraft.rangeYear')}
               </dt>
               <dd className="text-sm font-medium text-ink">
-                Hasta ~{aircraft.maxRangeNm.toLocaleString('es')} NM · año {aircraft.year}
+                {ti('aircraft.rangeLine', {
+                  nm: aircraft.maxRangeNm.toLocaleString(numLocale),
+                  year: aircraft.year,
+                })}
               </dd>
             </div>
           </dl>

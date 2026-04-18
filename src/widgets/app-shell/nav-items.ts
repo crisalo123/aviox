@@ -2,8 +2,10 @@ import type { LucideIcon } from 'lucide-react'
 import {
   CalendarDays,
   ClipboardList,
+  FileText,
   LayoutDashboard,
   Map,
+  Navigation2,
   PlaneTakeoff,
   Users,
   Wallet,
@@ -18,34 +20,56 @@ export interface NavItem {
   roles?: readonly UserRole[]
 }
 
-export const NAV_ITEMS: readonly NavItem[] = [
-  { to: '/inicio', label: 'Inicio', icon: LayoutDashboard },
-  { to: '/flota', label: 'Flota', icon: PlaneTakeoff },
-  { to: '/horario', label: 'Horario de vuelos', icon: CalendarDays },
+interface NavItemDef {
+  to: string
+  labelKey: string
+  icon: LucideIcon
+  roles?: readonly UserRole[]
+}
+
+const NAV_ITEM_DEFS: readonly NavItemDef[] = [
+  { to: '/inicio', labelKey: 'nav.inicio', icon: LayoutDashboard },
+  { to: '/flota', labelKey: 'nav.flota', icon: PlaneTakeoff },
+  { to: '/horario', labelKey: 'nav.horario', icon: CalendarDays },
   {
     to: '/reservas',
-    label: 'Reservas',
+    labelKey: 'nav.reservas',
     icon: ClipboardList,
     roles: ['student', 'tutor'] as const,
   },
-  { to: '/pista', label: 'Mapa de pista', icon: Map },
+  { to: '/documentos', labelKey: 'nav.documentos', icon: FileText },
+  {
+    to: '/seguimiento',
+    labelKey: 'nav.seguimiento',
+    icon: Navigation2,
+    roles: ['student', 'tutor'] as const,
+  },
+  { to: '/pista', labelKey: 'nav.pista', icon: Map },
   {
     to: '/tutor/progreso',
-    label: 'Progreso alumnos',
+    labelKey: 'nav.tutorProgreso',
     icon: Users,
     roles: ['tutor'] as const,
   },
   {
     to: '/tutor/finanzas',
-    label: 'Ganancias y saldo',
+    labelKey: 'nav.tutorFinanzas',
     icon: Wallet,
     roles: ['tutor'] as const,
   },
 ] as const
 
-export function navItemsForRole(role: UserRole): NavItem[] {
-  return NAV_ITEMS.filter((item) => {
+export function navItemsForRole(
+  role: UserRole,
+  t: (key: string) => string,
+): NavItem[] {
+  return NAV_ITEM_DEFS.filter((item) => {
     if (!item.roles) return true
     return item.roles.includes(role)
-  })
+  }).map((item) => ({
+    to: item.to,
+    icon: item.icon,
+    label: t(item.labelKey),
+    roles: item.roles,
+  }))
 }

@@ -1,11 +1,12 @@
 import { Loader2, LogOut } from 'lucide-react'
 import { Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { ROLE_LABELS } from '@/entities/user/model/types'
 import { useAuth } from '@/features/auth/model/useAuth'
 import { FlightWeatherBanner } from '@/features/weather/ui/FlightWeatherBanner'
 import { APP_NAME } from '@/shared/config/brand'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Button } from '@/shared/ui/Button'
+import { LanguageSwitcher } from '@/shared/ui/LanguageSwitcher'
 import { LogoMark } from '@/shared/ui/LogoMark'
 import { navItemsForRole } from '@/widgets/app-shell/nav-items'
 
@@ -20,9 +21,11 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 
 export function AppShell() {
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
   if (!user) return null
 
-  const items = navItemsForRole(user.role)
+  const items = navItemsForRole(user.role, t)
+  const roleLabel = t(`role.${user.role}`)
 
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
@@ -46,7 +49,7 @@ export function AppShell() {
               {user.displayName}
             </p>
             <p className="truncate text-[0.65rem] font-medium uppercase tracking-wider text-teal-300/90">
-              {ROLE_LABELS[user.role]}
+              {roleLabel}
             </p>
           </div>
         </div>
@@ -63,7 +66,8 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
-        <div className="relative mt-auto hidden p-3 md:block">
+        <div className="relative mt-auto hidden flex-col gap-3 p-3 md:flex">
+          <LanguageSwitcher variant="sidebar" className="w-full justify-center" />
           <Button
             type="button"
             variant="ghost"
@@ -71,22 +75,28 @@ export function AppShell() {
             onClick={() => logout()}
           >
             <LogOut className="h-4 w-4" aria-hidden />
-            Cerrar sesión
+            {t('shell.logout')}
           </Button>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col bg-gradient-to-br from-[#eef4f7] via-[#e8f1f5] to-[#dfeaf0]">
-        <header className="flex items-center justify-between border-b border-white/60 bg-white/55 px-4 py-3 shadow-sm shadow-ink/5 backdrop-blur-md md:hidden">
-          <p className="text-sm font-semibold tracking-wide text-ink">{APP_NAME}</p>
-          <Button
-            type="button"
-            variant="ghost"
-            className="text-ink-muted hover:text-red-700"
-            onClick={() => logout()}
-          >
-            <LogOut className="h-4 w-4" aria-hidden />
-          </Button>
+        <header className="flex items-center justify-between gap-3 border-b border-white/60 bg-white/55 px-3 py-2.5 shadow-sm shadow-ink/5 backdrop-blur-md md:hidden">
+          <p className="min-w-0 truncate text-sm font-semibold tracking-wide text-ink">
+            {APP_NAME}
+          </p>
+          <div className="flex shrink-0 items-center gap-2">
+            <LanguageSwitcher variant="surface" />
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-ink-muted hover:text-red-700"
+              onClick={() => logout()}
+              aria-label={t('shell.logout')}
+            >
+              <LogOut className="h-4 w-4" aria-hidden />
+            </Button>
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 md:p-10">
           <div className="mx-auto max-w-5xl space-y-6">
@@ -95,7 +105,7 @@ export function AppShell() {
               fallback={
                 <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 rounded-2xl border border-white/60 bg-white/40 py-16 text-sm font-medium text-ink-muted backdrop-blur-sm">
                   <Loader2 className="h-9 w-9 animate-spin text-brand" aria-hidden />
-                  Cargando vista…
+                  {t('shell.loading')}
                 </div>
               }
             >

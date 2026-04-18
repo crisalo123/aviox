@@ -3,21 +3,20 @@ import { getAircraftById } from '@/entities/aircraft/catalog/aircraftCatalog'
 import { useAuth } from '@/features/auth/model/useAuth'
 import { useBookings } from '@/features/booking/model/useBookings'
 import { formatSlotRange } from '@/shared/lib/dates'
+import { useLanguage } from '@/shared/i18n/languageContext'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
 
 export function ReservationsView() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const { bookings, cancelBooking, completeBooking } = useBookings()
 
   if (!user) return null
 
   if (user.role === 'user') {
     return (
-      <Card
-        title="Reservas"
-        description="Con el rol usuario solo puedes consultar el horario de vuelos. Cambia a estudiante o tutor en el inicio de sesión para ver reservas."
-      />
+      <Card title={t('reservations.title')} description={t('reservations.noUserDesc')} />
     )
   }
 
@@ -31,17 +30,17 @@ export function ReservationsView() {
   return (
     <div className="flex flex-col gap-4">
       <Card
-        title="Reservas"
+        title={t('reservations.title')}
         description={
           user.role === 'tutor'
-            ? 'Todas las reservas registradas en el sistema.'
-            : 'Tus clases agendadas.'
+            ? t('reservations.descTutor')
+            : t('reservations.descStudent')
         }
       />
 
       {active.length === 0 ? (
         <p className="rounded-lg border border-dashed border-surface-2 bg-surface-1 px-4 py-8 text-center text-sm text-ink-muted">
-          No hay reservas para mostrar.
+          {t('reservations.empty')}
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -70,7 +69,7 @@ export function ReservationsView() {
                     {formatSlotRange(b.startsAt, b.endsAt)}
                   </p>
                   <p className="text-sm text-ink-muted">
-                    {b.aircraftLabel} · Zona {b.zone.toUpperCase()}
+                    {b.aircraftLabel} · {t('common.zone')} {b.zone.toUpperCase()}
                   </p>
                   {user.role === 'tutor' ? (
                     <p className="mt-1 flex items-center gap-1 text-xs text-ink-muted">
@@ -79,7 +78,7 @@ export function ReservationsView() {
                     </p>
                   ) : null}
                   <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">
-                    Estado: {b.status}
+                    {t('reservations.status')}: {t(`booking.status.${b.status}`)}
                   </p>
                 </div>
               </div>
@@ -91,7 +90,7 @@ export function ReservationsView() {
                     className="text-red-700"
                     onClick={() => cancelBooking(b.id, user.id)}
                   >
-                    Cancelar
+                    {t('reservations.cancel')}
                   </Button>
                 ) : null}
                 {user.role === 'tutor' && b.status === 'confirmada' ? (
@@ -100,7 +99,7 @@ export function ReservationsView() {
                     variant="secondary"
                     onClick={() => completeBooking(b.id)}
                   >
-                    Marcar completada
+                    {t('reservations.markComplete')}
                   </Button>
                 ) : null}
               </div>
