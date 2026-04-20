@@ -1,10 +1,19 @@
-import { Camera, ExternalLink, FileText, ImageIcon, Link2, Trash2 } from 'lucide-react'
+import {
+  Camera,
+  ExternalLink,
+  Eye,
+  FileText,
+  ImageIcon,
+  Link2,
+  Trash2,
+} from 'lucide-react'
 import type { SchoolDocument } from '@/entities/document/model/types'
 import { useMemo, useState, type FormEvent } from 'react'
 import {
   MAX_DOCUMENT_UPLOAD_BYTES,
   readFileAsDataUrl,
 } from '@/features/documents/lib/readFileAsDataUrl'
+import { DocumentPreviewModal } from '@/features/documents/ui/DocumentPreviewModal'
 import { useDocuments } from '@/features/documents/model/useDocuments'
 import { useLanguage } from '@/shared/i18n/languageContext'
 import { Button } from '@/shared/ui/Button'
@@ -14,6 +23,7 @@ import { Input } from '@/shared/ui/Input'
 export function DocumentsView() {
   const { documents, addDocument, removeDocument } = useDocuments()
   const { t, ti } = useLanguage()
+  const [preview, setPreview] = useState<SchoolDocument | null>(null)
   const maxMb = Math.round(MAX_DOCUMENT_UPLOAD_BYTES / (1024 * 1024))
 
   const [refTitle, setRefTitle] = useState('')
@@ -90,7 +100,11 @@ export function DocumentsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Card title={t('documents.page.title')} description={t('documents.page.lead')} />
+      <Card
+        title={t('documents.page.title')}
+        description={`${t('documents.page.lead')} ${t('documents.listHint')}`}
+      />
+      <DocumentPreviewModal document={preview} onClose={() => setPreview(null)} />
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card
@@ -227,7 +241,12 @@ export function DocumentsView() {
               </h2>
               <ul className="flex flex-col gap-3">
                 {subidas.map((d) => (
-                  <DocumentRow key={d.id} d={d} onRemove={() => removeDocument(d.id)} />
+                  <DocumentRow
+                    key={d.id}
+                    d={d}
+                    onOpenPreview={() => setPreview(d)}
+                    onRemove={() => removeDocument(d.id)}
+                  />
                 ))}
               </ul>
             </section>
@@ -240,7 +259,12 @@ export function DocumentsView() {
               </h2>
               <ul className="flex flex-col gap-3">
                 {referencias.map((d) => (
-                  <DocumentRow key={d.id} d={d} onRemove={() => removeDocument(d.id)} />
+                  <DocumentRow
+                    key={d.id}
+                    d={d}
+                    onOpenPreview={() => setPreview(d)}
+                    onRemove={() => removeDocument(d.id)}
+                  />
                 ))}
               </ul>
             </section>
@@ -251,7 +275,15 @@ export function DocumentsView() {
   )
 }
 
-function DocumentRow({ d, onRemove }: { d: SchoolDocument; onRemove: () => void }) {
+function DocumentRow({
+  d,
+  onOpenPreview,
+  onRemove,
+}: {
+  d: SchoolDocument
+  onOpenPreview: () => void
+  onRemove: () => void
+}) {
   const { locale, t } = useLanguage()
   const isSubida = d.kind === 'subida'
   const isImage =
@@ -259,8 +291,11 @@ function DocumentRow({ d, onRemove }: { d: SchoolDocument; onRemove: () => void 
   const dateLocale = locale === 'en' ? 'en-US' : 'es-CO'
 
   return (
-    <li className="flex flex-col gap-3 rounded-xl border border-surface-2 bg-surface-1 p-4 shadow-sm sm:flex-row sm:items-start sm:justify-between">
-      <div className="flex min-w-0 flex-1 gap-3">
+    <li className="flex flex-col gap-3 rounded-xl border border-surface-2 bg-surface-1 p-4 shadow-sm transition hover:border-brand/25 hover:shadow-md sm:flex-row sm:items-start sm:justify-between">
+      <div
+        className="flex min-w-0 flex-1 cursor-pointer gap-3 rounded-lg outline-none ring-brand/0 transition hover:ring-2 hover:ring-brand/15"
+        onClick={() => onOpenPreview()}
+      >
         <span
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ring-1 ${
             isSubida
@@ -299,6 +334,7 @@ function DocumentRow({ d, onRemove }: { d: SchoolDocument; onRemove: () => void 
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+              onClick={(ev) => ev.stopPropagation()}
             >
               {t('documents.openLink')}
               <ExternalLink className="h-3.5 w-3.5" aria-hidden />
@@ -317,6 +353,7 @@ function DocumentRow({ d, onRemove }: { d: SchoolDocument; onRemove: () => void 
                   href={d.attachmentDataUrl}
                   download={d.attachmentName ?? 'documento.pdf'}
                   className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:underline"
+                  onClick={(ev) => ev.stopPropagation()}
                 >
                   {t('documents.download')}
                   <ExternalLink className="h-3.5 w-3.5" aria-hidden />
@@ -332,15 +369,32 @@ function DocumentRow({ d, onRemove }: { d: SchoolDocument; onRemove: () => void 
           </p>
         </div>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        className="shrink-0 self-start text-red-700 hover:bg-red-50"
-        onClick={onRemove}
-      >
-        <Trash2 className="h-4 w-4" aria-hidden />
-        {t('common.remove')}
-      </Button>
+      <div className="flex shrink-0 flex-col gap-2 self-start sm:flex-row sm:items-start">
+        <Button
+          type="button"
+          variant="ghost"
+          className="text-brand hover:bg-brand/5"
+          onClick={(ev) => {
+            ev.stopPropagation()
+            onOpenPreview()
+          }}
+        >
+          <Eye className="h-4 w-4" aria-hidden />
+          {t('documents.view')}
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          className="text-red-700 hover:bg-red-50"
+          onClick={(ev) => {
+            ev.stopPropagation()
+            onRemove()
+          }}
+        >
+          <Trash2 className="h-4 w-4" aria-hidden />
+          {t('common.remove')}
+        </Button>
+      </div>
     </li>
   )
 }

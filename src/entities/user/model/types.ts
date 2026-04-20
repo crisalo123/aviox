@@ -5,6 +5,8 @@ export interface User {
   email: string
   displayName: string
   role: UserRole
+  /** Foto de perfil (data URL), solo en este navegador. */
+  avatarDataUrl?: string
 }
 
 export const ROLE_LABELS: Record<UserRole, string> = {

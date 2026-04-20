@@ -14,6 +14,7 @@ const es: Record<string, string> = {
   'nav.pista': 'Mapa de pista',
   'nav.tutorProgreso': 'Progreso alumnos',
   'nav.tutorFinanzas': 'Ganancias y saldo',
+  'nav.perfil': 'Mi perfil',
 
   'shell.logout': 'Cerrar sesión',
   'shell.loading': 'Cargando vista…',
@@ -89,6 +90,23 @@ const es: Record<string, string> = {
   'common.close': 'Cerrar',
   'common.zone': 'Zona',
 
+  'profile.title': 'Mi perfil',
+  'profile.lead':
+    'Nombre visible y foto de perfil. En esta demo todo se guarda solo en este navegador.',
+  'profile.photoTitle': 'Foto de perfil',
+  'profile.photoDesc': 'Se muestra en el menú lateral y en el encabezado móvil.',
+  'profile.changePhoto': 'Cambiar foto',
+  'profile.addPhoto': 'Añadir foto',
+  'profile.removePhoto': 'Quitar foto',
+  'profile.photoHelp': 'Solo imágenes. Máximo ~{mb} MB.',
+  'profile.errImage': 'Selecciona un archivo de imagen (JPG, PNG, etc.).',
+  'profile.errSize': 'La imagen supera {mb} MB. Elige otra más liviana.',
+  'profile.errRead': 'No se pudo leer la imagen. Intenta de nuevo.',
+  'profile.nameTitle': 'Nombre',
+  'profile.nameDesc': 'Así apareces en la barra lateral y en la app.',
+  'profile.displayName': 'Nombre a mostrar',
+  'profile.saveName': 'Guardar nombre',
+
   'booking.error.slot_taken': 'Este hueco ya está reservado.',
   'booking.error.tutor_simulation_only':
     'Solo instructores pueden registrar una clase simulada para un alumno.',
@@ -102,11 +120,17 @@ const es: Record<string, string> = {
   'reservations.noUserDesc':
     'Con el rol usuario solo puedes consultar el horario de vuelos. Cambia a estudiante o tutor en el inicio de sesión para ver reservas.',
   'reservations.descTutor': 'Todas las reservas registradas en el sistema.',
+  'reservations.attendanceLeadTutor':
+    'En cada reserva, en la sección Asistencia, marca si el alumno asistió o no a esa clase (o déjalo sin registrar). Solo una opción a la vez; se guarda en este navegador.',
   'reservations.descStudent': 'Tus clases agendadas.',
   'reservations.empty': 'No hay reservas para mostrar.',
   'reservations.status': 'Estado',
   'reservations.cancel': 'Cancelar',
   'reservations.markComplete': 'Marcar completada',
+  'reservations.attendance.label': 'Asistencia',
+  'reservations.attendance.show': 'Asistió',
+  'reservations.attendance.noShow': 'No asistió',
+  'reservations.attendance.clear': 'Sin registrar',
 
   'schedule.title': 'Agenda de vuelos',
   'schedule.desc.readOnly': 'Solo consulta: elige un bloque en el calendario para ver detalle.',
@@ -230,6 +254,16 @@ const es: Record<string, string> = {
   'documents.aircraftLabel': 'Avión / referencia',
   'documents.openLink': 'Abrir enlace',
   'documents.download': 'Descargar / abrir archivo',
+  'documents.listHint':
+    'Pulsa una fila o «Ver presentación» para ver fotos y PDF dentro de la aplicación.',
+  'documents.view': 'Ver presentación',
+  'documents.preview.noInline': 'Este archivo no se puede previsualizar aquí; puedes descargarlo.',
+  'documents.preview.embedNote':
+    'Algunos sitios bloquean la vista embebida; si ves la página en blanco, abre el enlace en una pestaña nueva.',
+  'documents.preview.noUrl': 'Esta referencia no tiene URL; solo queda el texto de la ficha.',
+  'documents.preview.openTab': 'Abrir en pestaña nueva',
+  'documents.preview.openLink': 'Abrir enlace',
+
   'documents.map.noKeyTitle': 'Vista de etapas (sin clave de mapas estáticos)',
   'documents.map.staticHint':
     'Configura VITE_GOOGLE_MAPS_API_KEY con la API de Maps Static API habilitada para ver el trazado en imagen.',
@@ -300,6 +334,12 @@ const es: Record<string, string> = {
   'progress.col.hours': 'Horas vuelo',
   'progress.col.landings': 'Aterrizajes',
   'progress.col.last': 'Última sesión',
+  'progress.col.attendance': 'Asistencia',
+  'progress.attendance.show': 'Asistió',
+  'progress.attendance.noShow': 'No asistió',
+  'progress.attendance.clear': 'Sin registrar',
+  'progress.attendance.hint':
+    'Columna Asistencia: indica si el alumno asistió o no a la última sesión referida. El detalle por cada clase está en Reservas.',
 }
 
 const en: Record<string, string> = {
@@ -316,6 +356,7 @@ const en: Record<string, string> = {
   'nav.pista': 'Runway map',
   'nav.tutorProgreso': 'Student progress',
   'nav.tutorFinanzas': 'Earnings & balance',
+  'nav.perfil': 'My profile',
 
   'shell.logout': 'Log out',
   'shell.loading': 'Loading…',
@@ -391,6 +432,23 @@ const en: Record<string, string> = {
   'common.close': 'Close',
   'common.zone': 'Zone',
 
+  'profile.title': 'My profile',
+  'profile.lead':
+    'Display name and profile photo. In this demo everything is stored only in this browser.',
+  'profile.photoTitle': 'Profile photo',
+  'profile.photoDesc': 'Shown in the side menu and mobile header.',
+  'profile.changePhoto': 'Change photo',
+  'profile.addPhoto': 'Add photo',
+  'profile.removePhoto': 'Remove photo',
+  'profile.photoHelp': 'Images only. Max ~{mb} MB.',
+  'profile.errImage': 'Please pick an image file (JPG, PNG, etc.).',
+  'profile.errSize': 'Image exceeds {mb} MB. Try a smaller file.',
+  'profile.errRead': 'Could not read the image. Try again.',
+  'profile.nameTitle': 'Name',
+  'profile.nameDesc': 'How you appear in the sidebar and across the app.',
+  'profile.displayName': 'Display name',
+  'profile.saveName': 'Save name',
+
   'booking.error.slot_taken': 'This slot is already booked.',
   'booking.error.tutor_simulation_only':
     'Only instructors can register a simulated lesson for a student.',
@@ -404,11 +462,17 @@ const en: Record<string, string> = {
   'reservations.noUserDesc':
     'As a visitor you can only browse the flight schedule. Switch to student or instructor to see bookings.',
   'reservations.descTutor': 'All bookings recorded in the system.',
+  'reservations.attendanceLeadTutor':
+    'On each booking, under Attendance, mark whether the student attended that lesson or not (or leave it not recorded). Only one option at a time; saved in this browser.',
   'reservations.descStudent': 'Your scheduled lessons.',
   'reservations.empty': 'No bookings to show.',
   'reservations.status': 'Status',
   'reservations.cancel': 'Cancel',
   'reservations.markComplete': 'Mark completed',
+  'reservations.attendance.label': 'Attendance',
+  'reservations.attendance.show': 'Attended',
+  'reservations.attendance.noShow': 'Did not attend',
+  'reservations.attendance.clear': 'Not recorded',
 
   'schedule.title': 'Flight schedule',
   'schedule.desc.readOnly': 'Read-only: pick a slot on the calendar to see details.',
@@ -532,6 +596,15 @@ const en: Record<string, string> = {
   'documents.aircraftLabel': 'Aircraft / reference',
   'documents.openLink': 'Open link',
   'documents.download': 'Download / open file',
+  'documents.listHint':
+    'Click a row or “Open preview” to view photos and PDFs inside the app.',
+  'documents.view': 'Open preview',
+  'documents.preview.noInline': 'This file cannot be previewed here; you can download it.',
+  'documents.preview.embedNote':
+    'Some sites block embedded views; if you see a blank page, open the link in a new tab.',
+  'documents.preview.noUrl': 'This reference has no URL; only the card text remains.',
+  'documents.preview.openTab': 'Open in new tab',
+  'documents.preview.openLink': 'Open link',
   'documents.map.noKeyTitle': 'Stage view (no static maps API key)',
   'documents.map.staticHint':
     'Set VITE_GOOGLE_MAPS_API_KEY with Maps Static API enabled to see the path image.',
@@ -602,6 +675,12 @@ const en: Record<string, string> = {
   'progress.col.hours': 'Flight hours',
   'progress.col.landings': 'Landings',
   'progress.col.last': 'Last session',
+  'progress.col.attendance': 'Attendance',
+  'progress.attendance.show': 'Attended',
+  'progress.attendance.noShow': 'Did not attend',
+  'progress.attendance.clear': 'Not recorded',
+  'progress.attendance.hint':
+    'Attendance column: whether the student attended the last session shown here. Per-lesson detail is under Bookings.',
 }
 
 export const messages: Record<Locale, Record<string, string>> = {

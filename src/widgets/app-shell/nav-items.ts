@@ -7,6 +7,7 @@ import {
   Map,
   Navigation2,
   PlaneTakeoff,
+  UserCircle,
   Users,
   Wallet,
 } from 'lucide-react'
@@ -29,6 +30,7 @@ interface NavItemDef {
 
 const NAV_ITEM_DEFS: readonly NavItemDef[] = [
   { to: '/inicio', labelKey: 'nav.inicio', icon: LayoutDashboard },
+  { to: '/perfil', labelKey: 'nav.perfil', icon: UserCircle },
   { to: '/flota', labelKey: 'nav.flota', icon: PlaneTakeoff },
   { to: '/horario', labelKey: 'nav.horario', icon: CalendarDays },
   {

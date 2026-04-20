@@ -10,6 +10,20 @@ import { LanguageSwitcher } from '@/shared/ui/LanguageSwitcher'
 import { LogoMark } from '@/shared/ui/LogoMark'
 import { navItemsForRole } from '@/widgets/app-shell/nav-items'
 
+function initialsFromDisplayName(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) {
+    return (parts[0]![0]! + parts[1]![0]!).toUpperCase()
+  }
+  if (parts[0] && parts[0].length >= 2) {
+    return parts[0].slice(0, 2).toUpperCase()
+  }
+  if (parts[0]?.length === 1) {
+    return parts[0].toUpperCase()
+  }
+  return '?'
+}
+
 function navLinkClass({ isActive }: { isActive: boolean }) {
   const base =
     'flex items-center gap-3 rounded-xl border-l-2 py-2.5 pl-[10px] pr-3 text-sm font-semibold tracking-wide transition-all duration-200'
@@ -38,10 +52,10 @@ export function AppShell() {
           }}
         />
         <div className="relative flex items-center gap-3 border-b border-white/10 px-4 py-5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400/25 to-cyan-700/20 text-teal-100 ring-1 ring-white/15 shadow-lg shadow-black/20">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400/25 to-cyan-700/20 text-teal-100 ring-1 ring-white/15 shadow-lg shadow-black/20">
             <LogoMark size={26} className="text-teal-50" />
           </span>
-          <div className="min-w-0 text-left">
+          <div className="min-w-0 flex-1 text-left">
             <p className="truncate text-base font-bold tracking-tight text-white">
               {APP_NAME}
             </p>
@@ -52,6 +66,27 @@ export function AppShell() {
               {roleLabel}
             </p>
           </div>
+          <NavLink
+            to="/perfil"
+            title={t('nav.perfil')}
+            className={({ isActive }) =>
+              `shrink-0 overflow-hidden rounded-2xl ring-2 transition ${
+                isActive ? 'ring-teal-300' : 'ring-white/10 hover:ring-teal-400/40'
+              }`
+            }
+          >
+            {user.avatarDataUrl ? (
+              <img
+                src={user.avatarDataUrl}
+                alt=""
+                className="h-11 w-11 object-cover"
+              />
+            ) : (
+              <span className="flex h-11 w-11 items-center justify-center bg-gradient-to-br from-slate-600 to-slate-800 text-xs font-bold uppercase tracking-wide text-teal-100">
+                {initialsFromDisplayName(user.displayName)}
+              </span>
+            )}
+          </NavLink>
         </div>
         <nav className="relative flex flex-row gap-1 overflow-x-auto px-2 py-4 md:flex-col md:overflow-visible md:px-3">
           {items.map((item) => (
@@ -82,9 +117,24 @@ export function AppShell() {
 
       <div className="flex min-w-0 flex-1 flex-col bg-gradient-to-br from-[#eef4f7] via-[#e8f1f5] to-[#dfeaf0]">
         <header className="flex items-center justify-between gap-3 border-b border-white/60 bg-white/55 px-3 py-2.5 shadow-sm shadow-ink/5 backdrop-blur-md md:hidden">
-          <p className="min-w-0 truncate text-sm font-semibold tracking-wide text-ink">
-            {APP_NAME}
-          </p>
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <NavLink
+              to="/perfil"
+              title={t('nav.perfil')}
+              className="shrink-0 overflow-hidden rounded-xl ring-1 ring-surface-2"
+            >
+              {user.avatarDataUrl ? (
+                <img src={user.avatarDataUrl} alt="" className="h-9 w-9 object-cover" />
+              ) : (
+                <span className="flex h-9 w-9 items-center justify-center bg-surface-2 text-[0.65rem] font-bold text-ink">
+                  {initialsFromDisplayName(user.displayName)}
+                </span>
+              )}
+            </NavLink>
+            <p className="min-w-0 truncate text-sm font-semibold tracking-wide text-ink">
+              {APP_NAME}
+            </p>
+          </div>
           <div className="flex shrink-0 items-center gap-2">
             <LanguageSwitcher variant="surface" />
             <Button

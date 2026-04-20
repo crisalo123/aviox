@@ -1,9 +1,11 @@
 import { ClipboardList, UserRound } from 'lucide-react'
 import { getAircraftById } from '@/entities/aircraft/catalog/aircraftCatalog'
 import { useAuth } from '@/features/auth/model/useAuth'
+import { useBookingAttendance } from '@/features/booking/model/useBookingAttendance'
 import { useBookings } from '@/features/booking/model/useBookings'
 import { formatSlotRange } from '@/shared/lib/dates'
 import { useLanguage } from '@/shared/i18n/languageContext'
+import { AttendanceSegmentedControl } from '@/shared/ui/AttendanceSegmentedControl'
 import { Button } from '@/shared/ui/Button'
 import { Card } from '@/shared/ui/Card'
 
@@ -11,6 +13,7 @@ export function ReservationsView() {
   const { user } = useAuth()
   const { t } = useLanguage()
   const { bookings, cancelBooking, completeBooking } = useBookings()
+  const { getAttendance, setAttendance } = useBookingAttendance()
 
   if (!user) return null
 
@@ -33,7 +36,7 @@ export function ReservationsView() {
         title={t('reservations.title')}
         description={
           user.role === 'tutor'
-            ? t('reservations.descTutor')
+            ? `${t('reservations.descTutor')} ${t('reservations.attendanceLeadTutor')}`
             : t('reservations.descStudent')
         }
       />
@@ -80,6 +83,20 @@ export function ReservationsView() {
                   <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">
                     {t('reservations.status')}: {t(`booking.status.${b.status}`)}
                   </p>
+                  {user.role === 'tutor' ? (
+                    <AttendanceSegmentedControl
+                      className="mt-3"
+                      name={`booking-attendance-${b.id}`}
+                      value={getAttendance(b.id)}
+                      onChange={(v) => setAttendance(b.id, v)}
+                      legend={t('reservations.attendance.label')}
+                      labels={{
+                        show: t('reservations.attendance.show'),
+                        noShow: t('reservations.attendance.noShow'),
+                        clear: t('reservations.attendance.clear'),
+                      }}
+                    />
+                  ) : null}
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
